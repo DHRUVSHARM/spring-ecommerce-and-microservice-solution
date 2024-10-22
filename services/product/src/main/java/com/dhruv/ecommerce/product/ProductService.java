@@ -1,10 +1,13 @@
 package com.dhruv.ecommerce.product;
 
+import com.dhruv.ecommerce.exception.ProductPurchaseException;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -34,15 +37,34 @@ public class ProductService {
         var storedProducts = repository.findAllByIdInOrderById(productIds);
         // we return the ids of the products that are found in the db
 
-        /*
-        if(productIds.size() != storedProducts.size()) {
-            // all the products requested are not in the db
-
+        if (productIds.size() != storedProducts.size()) {
+            // product dne in the db
+            throw new ProductPurchaseException("One or more products does not exist");
         }
 
-         */
+        // sort the request by the product id
+        var sortedRequest = request
+                .stream()
+                .sorted(Comparator.comparing(ProductPurchaseRequest::productId))
+                .toList();
 
-        return null;
+        // store final result here
+        var purchasedProducts = new ArrayList<ProductPurchaseResponse>();
+
+
+        for (int i = 0; i < storedProducts.size(); i++) {
+            var product = storedProducts.get(i);
+            var productRequest = sortedRequest.get(i);
+            if (product.getAvailableQuantity() < productRequest.quantity()) {
+                throw new ProductPurchaseException("Insufficient stock quantity for product with ID:: " + productRequest.productId());
+            }
+            var newAvailableQuantity = product.getAvailableQuantity() - productRequest.quantity();
+            product.setAvailableQuantity(newAvailableQuantity);
+            repository.save(product);
+            purchasedProducts.add(mapper.toproductPurchaseResponse(product, productRequest.quantity()));
+        }
+
+        return purchasedProducts;
     }
 
 
