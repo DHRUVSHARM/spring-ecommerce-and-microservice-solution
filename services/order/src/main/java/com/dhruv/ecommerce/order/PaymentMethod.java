@@ -1,4 +1,4 @@
-package com.dhruv.order.order;
+package com.dhruv.ecommerce.order;
 
 public enum PaymentMethod {
 

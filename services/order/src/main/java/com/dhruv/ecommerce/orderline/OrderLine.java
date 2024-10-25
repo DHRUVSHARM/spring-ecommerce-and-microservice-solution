@@ -1,6 +1,6 @@
-package com.dhruv.order.orderline;
+package com.dhruv.ecommerce.orderline;
 
-import com.dhruv.order.order.Order;
+import com.dhruv.ecommerce.order.Order;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;

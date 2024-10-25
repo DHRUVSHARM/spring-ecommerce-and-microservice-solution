@@ -1,6 +1,6 @@
-package com.dhruv.order.order;
+package com.dhruv.ecommerce.order;
 
-import com.dhruv.order.orderline.OrderLine;
+import com.dhruv.ecommerce.orderline.OrderLine;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EntityListeners;
