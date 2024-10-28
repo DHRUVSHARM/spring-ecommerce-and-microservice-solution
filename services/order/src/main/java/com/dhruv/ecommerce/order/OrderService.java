@@ -1,12 +1,12 @@
 package com.dhruv.ecommerce.order;
 
-import com.alibou.ecommerce.kafka.OrderConfirmation;
+import com.dhruv.ecommerce.kafka.OrderConfirmation;
 import com.dhruv.ecommerce.customer.CustomerClient;
 import com.dhruv.ecommerce.exception.BusinessException;
-import com.alibou.ecommerce.kafka.OrderProducer;
+import com.dhruv.ecommerce.kafka.OrderProducer;
 import com.dhruv.ecommerce.orderline.OrderLineRequest;
 import com.dhruv.ecommerce.orderline.OrderLineService;
-import com.alibou.ecommerce.payment.PaymentClient;
+import com.dhruv.ecommerce.payment.PaymentClient;
 import com.dhruv.ecommerce.payment.PaymentRequest;
 import com.dhruv.ecommerce.product.ProductClient;
 import com.dhruv.ecommerce.product.PurchaseRequest;
@@ -77,6 +77,7 @@ public class OrderService {
         );
         paymentClient.requestOrderPayment(paymentRequest);
 
+        // sending the order to the kafka broker , putting the order confirmation in the kafka producer
         orderProducer.sendOrderConfirmation(
                 new OrderConfirmation(
                         request.reference(),
