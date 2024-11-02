@@ -35,4 +35,31 @@ Below is an explanation of the various domains and their relationships.
    - A **Payment** is linked to a single **Order**.
    - **Notifications** are linked to **Orders** and represent updates to the customer.
 
+## Flow of the Application
+
+Below is the diagram representing the application architecture complete with all the databases and showing where kafka, zipkin etc; are used : 
+
+![image](https://github.com/user-attachments/assets/4ea8cc2a-7584-4c1e-a135-10ed2c609e62)
+
+Here’s an example of how the application’s flow works, from placing an order to receiving notifications:
+
+1. **Customer Registration**: A customer registers with their information and is assigned a unique `Customer ID`. Their address is also stored.
+   
+2. **Browsing Products**: The customer can view and search products, which are organized by categories. The available quantity is displayed for each product.
+
+3. **Placing an Order**: When the customer decides to purchase products, they create an order. 
+   - The application captures each item and its quantity in an `OrderLine`.
+   - The total cost and order details are stored in the `Order` object.
+
+4. **Processing Payment**: After placing an order, the customer proceeds to payment.
+   - The `Payment` entity is created with details such as the payment amount, status (e.g., `PENDING`, `COMPLETED`), and a unique payment reference.
+   - Payment status is tracked in real-time and updated accordingly.
+
+5. **Notifications**: 
+   - As the payment status or order status changes (e.g., from `PROCESSING` to `SHIPPED`), a `Notification` is sent to inform the customer.
+   - Notifications also include payment confirmations and delivery updates.
+
+6. **Order Fulfillment and Delivery**: Once payment is completed and verified, the order moves to the fulfillment stage, where it’s processed and shipped to the customer. Notifications keep the customer updated throughout.
+
+
 
