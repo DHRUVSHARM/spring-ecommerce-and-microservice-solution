@@ -1,9 +1,32 @@
 Scalable ecommerce and payments solution in Spring Boot using microservices architecture. Uses technologies like Kaftka, Spring Cloud Config etc to allow web service discovery, distributed tracing and reactive behaviour.
 
+## Project Overview
+
+- To begin with we have an api gateway exposed to the outside world, which can be invoked from a choice of frontend depending on the development team. The api gateway can be configure for authentication,
+load balancing etc; 
+
+- there are 3 routes available to the user which are for performing actions relating to :
+1) /customers -> for creating and storing a customer in a mongodb database in the customer microservice.
+2) /products -> cretes and stores products to be sold in a postgresql database in the product microservice.
+3) /orders -> stores an order in a postgresql database, an oder consists of a list of orderline elements that each establish a relationship between a customer and a product, an order is also related to a payment ment which is another microservice.
+
+- furthermore, the order microservice uses openfeign to send an order confirmation asyncronously to a kafka message broker
+- also, the payment microserevice sends a payment confirmation to the kafka message broker
+- both notfications are consumed by the notification microservice and stored in a mongodb database and used to send out an email to the user concerned
+- the entire process can be traced using zipkin logs
+- we use spring cloud config as a separate microservice that contains externalized config for each of the microservices
+- there is a eureka discovery server that registers these services as and when we start them up.
+
 I have provided the details of the er diagram on the basis of which the microservice design is selected, will be updating more detailed diagrams as the application development progresses : 
 
 ## ER Diagram
 ![image](https://github.com/user-attachments/assets/f8bf1bc4-8772-4a24-810b-e28f0bd63cf7)
+
+## Flow of the Application
+
+Below is the diagram representing the application architecture complete with all the databases and showing where kafka, zipkin etc; are used : 
+
+![image](https://github.com/user-attachments/assets/4ea8cc2a-7584-4c1e-a135-10ed2c609e62)
 
 # Detailed explanation
 
@@ -34,12 +57,6 @@ Below is an explanation of the various domains and their relationships.
    - Each **Order** can have multiple **OrderLines**, linking products to the order.
    - A **Payment** is linked to a single **Order**.
    - **Notifications** are linked to **Orders** and represent updates to the customer.
-
-## Flow of the Application
-
-Below is the diagram representing the application architecture complete with all the databases and showing where kafka, zipkin etc; are used : 
-
-![image](https://github.com/user-attachments/assets/4ea8cc2a-7584-4c1e-a135-10ed2c609e62)
 
 Here’s an example of how the application’s flow works, from placing an order to receiving notifications:
 
